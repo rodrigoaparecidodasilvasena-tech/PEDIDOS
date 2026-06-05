@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido — Mariano Produtos Químicos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --preto:        #0a0a0a;
+    --preto-card:   #111318;
+    --preto-borda:  #1e2330;
+    --preto-hover:  #181d27;
+    --azul:         #0d2b55;
+    --azul-medio:   #1a4a8a;
+    --azul-brilho:  #2563eb;
+    --azul-dim:     #162040;
+    --laranja:      #f05a0e;
+    --laranja-dim:  #7a2c06;
+    --laranja-glow: rgba(240,90,14,0.15);
+    --texto:        #e8ecf4;
+    --texto-suave:  #7a8aaa;
+    --texto-dim:    #3a4560;
+    --verde:        #22c55e;
+    --verde-dim:    #052e16;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--preto);
+    color: var(--texto);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(13,43,85,0.4) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(240,90,14,0.08) 0%, transparent 50%);
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2b55 60%, #0f1e3a 100%);
+    border: 1px solid var(--azul-medio);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 28px 32px 22px;
+    display: flex; align-items: center; gap: 20px;
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--laranja) 0%, transparent 70%);
+    opacity: 0.08;
+  }
+  .header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--laranja), transparent);
+    opacity: 0.6;
+  }
+  .header-logo {
+    width: 52px; height: 52px;
+    background: var(--laranja);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: #fff; letter-spacing: 1px; flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(240,90,14,0.4);
+  }
+  .header-texto h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 2px; color: #fff; line-height: 1;
+  }
+  .header-texto p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 3px; letter-spacing: 0.5px; }
+  .num-pedido { margin-left: auto; text-align: right; z-index: 1; }
+  .num-pedido span { font-size: 11px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; display: block; }
+  .num-pedido strong { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--laranja); letter-spacing: 2px; text-shadow: 0 0 12px rgba(240,90,14,0.5); }
+
+  /* CORPO */
+  .corpo {
+    background: var(--preto-card);
+    border: 1px solid var(--preto-borda);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 28px 32px 32px;
+  }
+
+  .secao { margin-bottom: 28px; }
+  .secao-titulo {
+    font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--texto-suave);
+    border-bottom: 1px solid var(--preto-borda);
+    padding-bottom: 8px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .secao-titulo::before {
+    content: ''; width: 4px; height: 14px;
+    background: var(--laranja); border-radius: 2px; display: inline-block;
+    box-shadow: 0 0 8px rgba(240,90,14,0.6);
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-full { grid-column: 1 / -1; }
+
+  .campo label { display: block; font-size: 11px; font-weight: 500; color: var(--texto-suave); margin-bottom: 5px; letter-spacing: 0.4px; }
+  .campo input, .campo select, .campo textarea {
+    width: 100%;
+    border: 1.5px solid var(--preto-borda);
+    border-radius: 8px; padding: 9px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    color: var(--texto);
+    background: #0d1117;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus {
+    border-color: var(--azul-brilho);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .campo select option { background: #0d1117; color: var(--texto); }
+  .campo textarea { resize: vertical; min-height: 60px; }
+
+  /* GRUPOS */
+  .grupo { margin-bottom: 14px; }
+  .grupo-header {
+    background: var(--azul-dim);
+    border: 1px solid rgba(37,99,235,0.25);
+    border-radius: 8px; padding: 9px 14px;
+    font-size: 12px; font-weight: 600; color: #7aabff;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 2px; cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.15s;
+  }
+  .grupo-header:hover { background: #1a3060; border-color: var(--azul-brilho); }
+  .grupo-arrow { font-size: 10px; transition: transform 0.2s; }
+  .grupo-body { display: block; }
+  .grupo-body.collapsed { display: none; }
+
+  /* TABELA */
+  .tabela-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--azul);
+    color: rgba(255,255,255,0.85);
+    padding: 9px 10px; text-align: left;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child  { border-radius: 0 8px 0 0; text-align: right; }
+  thead th.center { text-align: center; }
+  tbody tr { border-bottom: 1px solid var(--preto-borda); transition: background 0.15s; }
+  tbody tr:hover { background: var(--preto-hover); }
+  tbody tr.tem-item { background: rgba(240,90,14,0.08) !important; border-left: 2px solid var(--laranja); }
+  tbody td { padding: 8px 10px; vertical-align: middle; color: var(--texto); }
+  tbody td.right { text-align: right; font-weight: 600; color: var(--laranja); }
+  tbody td.center { text-align: center; }
+
+  .produto-nome { font-weight: 500; font-size: 13px; color: var(--texto); }
+  .produto-sub { font-size: 11px; color: var(--texto-suave); }
+
+  .qty-wrap { display: flex; align-items: center; gap: 5px; justify-content: center; }
+  .qty-wrap button {
+    width: 24px; height: 24px; border-radius: 6px;
+    border: 1.5px solid var(--preto-borda);
+    background: #0d1117;
+    cursor: pointer; font-size: 15px; line-height: 1; color: var(--texto-suave);
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .qty-wrap button:hover { background: var(--laranja); color: #fff; border-color: var(--laranja); box-shadow: 0 0 8px rgba(240,90,14,0.4); }
+  .qty-wrap input {
+    width: 48px; border: 1.5px solid var(--preto-borda); border-radius: 6px;
+    text-align: center; padding: 3px 4px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--texto); background: #0d1117; outline: none;
+  }
+  .qty-wrap input:focus { border-color: var(--laranja); }
+
+  .preco-cell { font-size: 13px; color: var(--texto-suave); white-space: nowrap; }
+
+  /* DESCONTO */
+  .desconto-row {
+    display: flex; align-items: center; gap: 12px; margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--verde-dim);
+    border: 1.5px solid rgba(34,197,94,0.25);
+    border-radius: 10px; flex-wrap: wrap;
+  }
+  .desconto-row label { font-size: 12px; font-weight: 600; color: var(--verde); letter-spacing: 0.5px; white-space: nowrap; }
+  .desconto-tipo { display: flex; gap: 6px; }
+  .desconto-tipo button {
+    padding: 5px 14px; border-radius: 6px;
+    border: 1.5px solid rgba(34,197,94,0.3);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--verde);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .desconto-tipo button.ativo { background: var(--verde); color: #000; border-color: var(--verde); }
+  .desconto-input { display: flex; align-items: center; gap: 6px; }
+  .desconto-input input {
+    width: 80px; border: 1.5px solid rgba(34,197,94,0.3); border-radius: 6px;
+    padding: 5px 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--verde); text-align: center; outline: none; background: #0a1a0e;
+  }
+  .desconto-input input:focus { border-color: var(--verde); }
+  .desconto-input span { font-size: 13px; color: var(--verde); font-weight: 600; }
+  .desconto-economia { font-size: 12px; color: var(--verde); font-weight: 500; margin-left: auto; }
+
+  /* TOTAIS */
+  .totais { margin-top: 16px; display: flex; justify-content: flex-end; }
+  .totais-box {
+    background: linear-gradient(135deg, #0a1628, #0d2b55);
+    border: 1px solid var(--azul-medio);
+    border-radius: 12px; padding: 18px 24px; min-width: 260px;
+    box-shadow: 0 0 30px rgba(13,43,85,0.5);
+  }
+  .totais-linha { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 4px 0; color: rgba(255,255,255,0.5); }
+  .totais-linha.verde { color: var(--verde); }
+  .totais-linha.destaque {
+    font-size: 19px; font-weight: 700; color: #fff;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 8px; padding-top: 10px;
+  }
+  .totais-linha.destaque span:last-child { color: var(--laranja); text-shadow: 0 0 12px rgba(240,90,14,0.5); }
+
+  .obs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+
+  /* BOTÕES */
+  .acoes { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 140px; padding: 13px 20px; border-radius: 10px; border: none;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    letter-spacing: 0.3px; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-limpar { background: #0d1117; color: var(--texto-suave); border: 1.5px solid var(--preto-borda); }
+  .btn-limpar:hover { background: #181d27; border-color: var(--azul-medio); }
+  .btn-zap { background: #128c3a; color: #fff; }
+  .btn-zap:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(22,163,74,0.3); }
+  .btn-imprimir { background: var(--laranja); color: #fff; }
+  .btn-imprimir:hover { background: #d44d08; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(240,90,14,0.4); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--azul); border: 1px solid var(--azul-brilho);
+    color: #fff; padding: 12px 24px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; z-index: 999;
+    transition: transform 0.3s ease; pointer-events: none;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 10mm 12mm; size: A4; }
+
+    body { background: #fff !important; padding: 0 !important; margin: 0 !important; background-image: none !important; }
+    .container { max-width: 100% !important; }
+
+    /* OCULTAR: botões, desconto, campos de pagamento/obs, botões qty */
+    .acoes,
+    .desconto-row,
+    .obs-row,
+    .qty-wrap button { display: none !important; }
+
+    /* HEADER compacto azul */
+    .header {
+      background: #0d2b55 !important;
+      border-radius: 0 !important;
+      padding: 12px 20px !important;
+      border: none !important;
+    }
+    .header-logo { width: 36px !important; height: 36px !important; font-size: 15px !important; box-shadow: none !important; }
+    .header-texto h1 { font-size: 17px !important; }
+    .header-texto p { font-size: 10px !important; }
+    .num-pedido strong { font-size: 15px !important; text-shadow: none !important; }
+
+    /* CORPO branco */
+    .corpo {
+      background: #fff !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 12px 20px 16px !important;
+      color: #000 !important;
+    }
+
+    /* SEÇÕES */
+    .secao { margin-bottom: 10px !important; }
+    .secao-titulo {
+      color: #222 !important;
+      border-bottom: 1.5px solid #ddd !important;
+      font-size: 9px !important;
+      padding-bottom: 4px !important;
+      margin-bottom: 8px !important;
+    }
+    .secao-titulo::before { background: #e8530a !important; box-shadow: none !important; }
+
+    /* CAMPOS de texto */
+    .campo label { color: #666 !important; font-size: 9px !important; margin-bottom: 2px !important; }
+    .campo input, .campo select, .campo textarea {
+      background: transparent !important;
+      border: none !important;
+      border-bottom: 1px solid #e0e0e0 !important;
+      border-radius: 0 !important;
+      color: #000 !important;
+      font-size: 12px !important;
+      padding: 2px 0 !important;
+      box-shadow: none !important;
+    }
+    .grid-2, .grid-3 { gap: 8px !important; }
+
+    /* GRUPOS: mostrar todos, colapso ignorado */
+    .grupo { margin-bottom: 6px !important; }
+    .grupo-header { display: none !important; }
+    .grupo-body { display: block !important; }
+    /* Ocultar grupos sem nenhum item selecionado */
+    .grupo-body:not(.tem-itens) { display: none !important; }
+
+    /* TABELA de produtos */
+    table { font-size: 11px !important; }
+    thead th {
+      background: #0d2b55 !important;
+      color: #fff !important;
+      font-size: 9px !important;
+      padding: 5px 8px !important;
+    }
+    /* Ocultar coluna Qtd (col 3) — já vai aparecer no nome da linha */
+    tbody tr { border-bottom: 1px solid #eee !important; background: #fff !important; }
+    tbody tr:not(.tem-item) { display: none !important; }
+    tbody tr.tem-item { background: #fff8f5 !important; border-left: 3px solid #e8530a !important; }
+    tbody td { padding: 5px 8px !important; color: #000 !important; font-size: 11px !important; }
+    tbody td.right { color: #c94a00 !important; font-weight: 700 !important; }
+    .produto-nome { color: #000 !important; font-size: 11px !important; font-weight: 600 !important; }
+    .produto-sub { color: #555 !important; font-size: 10px !important; }
+    .qty-wrap input {
+      border: none !important; background: transparent !important;
+      font-size: 13px !important; font-weight: 700 !important;
+      color: #000 !important; width: 32px !important;
+    }
+    .preco-cell { color: #444 !important; font-size: 11px !important; }
+
+    /* TOTAIS */
+    .totais { margin-top: 10px !important; }
+    .totais-box {
+      background: #0d2b55 !important;
+      border-radius: 6px !important;
+      padding: 10px 18px !important;
+      min-width: 220px !important;
+    }
+    .totais-linha { font-size: 11px !important; padding: 3px 0 !important; color: rgba(255,255,255,0.7) !important; }
+    .totais-linha.verde { color: #4ade80 !important; }
+    .totais-linha.destaque { font-size: 15px !important; padding-top: 8px !important; margin-top: 6px !important; color: #fff !important; }
+    .totais-linha.destaque span:last-child { color: #f05a0e !important; }
+
+    /* RODAPÉ */
+    .print-footer {
+      display: block !important;
+      text-align: center;
+      font-size: 9px;
+      color: #aaa;
+      border-top: 1px solid #eee;
+      padding-top: 6px;
+      margin-top: 14px;
+    }
+  }
+  @media (max-width: 540px) {
+    .header { flex-wrap: wrap; padding: 20px; }
+    .corpo { padding: 20px 16px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .obs-row { grid-template-columns: 1fr; }
+    .num-pedido { width: 100%; text-align: left; }
+    .desconto-economia { width: 100%; margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-logo">MQ</div>
+    <div class="header-texto">
+      <h1>Mariano Produtos Químicos</h1>
+      <p>CNPJ 43.735.866/0001-53 · Paranavaí – PR</p>
+    </div>
+    <div class="num-pedido">
+      <span>Nº do Pedido</span>
+      <strong id="numPedido">#001</strong>
+    </div>
+  </div>
+
+  <div class="corpo">
+
+    <div class="secao">
+      <div class="secao-titulo">Informações do Pedido</div>
+      <div class="grid-3">
+        <div class="campo"><label>Data</label><input type="date" id="data"></div>
+        <div class="campo"><label>Vendedor</label>
+          <select id="vendedor">
+            <option value="">Selecionar...</option>
+            <option>Adilson Mariano</option>
+            <option>Hélio Jr</option>
+            <option>Mateus Henrique</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        <div class="campo"><label>Rota</label>
+          <select id="rota">
+            <option value="">Selecionar...</option>
+            <option>Rota 1</option>
+            <option>Rota 2</option>
+            <option>Rota 3</option>
+            <option>Rota 4</option>
+            <option>Rota 5</option>
+            <option>Rota 6</option>
+            <option>Rota 7</option>
+            <option>Rota 8</option>
+            <option>Rota 9</option>
+            <option>Rota 10</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao-titulo">Dados do Cliente</div>
+      <div class="grid-2">
+        <div class="campo grid-full"><label>Razão Social / Nome</label><input type="text" id="cliente" placeholder="Nome do cliente ou empresa"></div>
+        <div class="campo"><label>CNPJ / CPF</label><input type="text" id="doc" placeholder="00.000.000/0001-00"></div>
+        <div class="campo"><label>Telefone / WhatsApp</label><input type="text" id="telefone" placeholder="(44) 9 9999-9999"></div>
+        <div class="campo grid-full"><label>Endereço de Entrega</label><input type="text" id="endereco" placeholder="Rua, número, bairro, cidade – UF"></div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao-titulo">Produtos</div>
+      <div id="grupos"></div>
+
+      <!-- DESCONTO -->
+      <div class="desconto-row">
+        <label>🏷 DESCONTO</label>
+        <div class="desconto-tipo">
+          <button id="btnPct" class="ativo" onclick="setTipoDesconto('pct')">%</button>
+          <button id="btnVal" onclick="setTipoDesconto('val')">R$</button>
+        </div>
+        <div class="desconto-input">
+          <input type="number" id="descontoInput" min="0" step="0.01" placeholder="0" oninput="renderTotais()">
+          <span id="descontoSufixo">%</span>
+        </div>
+        <div class="desconto-economia" id="descontoEconomia"></div>
+      </div>
+
+      <div class="totais">
+        <div class="totais-box">
+          <div class="totais-linha"><span>Itens no pedido</span><span id="totalItens">0 un</span></div>
+          <div class="totais-linha"><span>Subtotal</span><span id="subtotalGeral">R$ 0,00</span></div>
+          <div class="totais-linha verde" id="linhaDesconto" style="display:none"><span>Desconto</span><span id="valorDesconto">— R$ 0,00</span></div>
+          <div class="totais-linha destaque"><span>Total do Pedido</span><span id="totalGeral">R$ 0,00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="obs-row">
+      <div class="campo">
+        <label>Forma de Pagamento</label>
+        <select id="pagamento">
+          <option value="">Selecionar...</option>
+          <option>À vista – Dinheiro</option>
+          <option>À vista – PIX</option>
+          <option>Boleto 7 dias</option>
+          <option>Boleto 14 dias</option>
+          <option>Boleto 30 dias</option>
+          <option>Cheque</option>
+          <option>Parcelado (combinar)</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Prazo de Entrega</label>
+        <select id="prazo">
+          <option value="">Selecionar...</option>
+          <option>Imediato</option>
+          <option>Próxima Rota</option>
+          <option>A combinar</option>
+        </select>
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Observações</label>
+        <textarea id="obs" placeholder="Instruções especiais, endereço alternativo, contato para entrega..."></textarea>
+      </div>
+    </div>
+
+    <div class="acoes">
+      <button class="btn btn-limpar" onclick="limpar()">✕ Limpar Pedido</button>
+      <button class="btn btn-zap" onclick="gerarWhatsApp()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Copiar p/ WhatsApp
+      </button>
+      <button class="btn btn-imprimir" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir / PDF
+      </button>
+    </div>
+
+  </div>
+</div>
+<div class="print-footer" style="display:none">
+  Mariano Produtos Químicos · CNPJ 43.735.866/0001-53 · Paranavaí – PR · Documento gerado digitalmente
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// CATÁLOGO COMPLETO — Mariano Ind. Química
+// =============================================
+const catalogo = [
+  {
+    grupo: 'Sem Toque',
+    produtos: [
+      { id: 'st5',  nome: 'Sem Toque', tam: '5L',  preco: 70.00 },
+      { id: 'st20', nome: 'Sem Toque', tam: '20L', preco: 260.00 },
+      { id: 'st50', nome: 'Sem Toque', tam: '50L', preco: 550.00 },
+    ]
+  },
+  {
+    grupo: 'Shampoo Automotivo',
+    produtos: [
+      { id: 'sh5',  nome: 'Shampoo', tam: '5L',  preco: 30.00 },
+      { id: 'sh20', nome: 'Shampoo', tam: '20L', preco: 110.00 },
+      { id: 'sh50', nome: 'Shampoo', tam: '50L', preco: 220.00 },
+    ]
+  },
+  {
+    grupo: 'Solupan 1x40',
+    produtos: [
+      { id: 'sp40_5',  nome: 'Solupan 1x40', tam: '5L',  preco: 30.00 },
+      { id: 'sp40_20', nome: 'Solupan 1x40', tam: '20L', preco: 100.00 },
+      { id: 'sp40_50', nome: 'Solupan 1x40', tam: '50L', preco: 200.00 },
+    ]
+  },
+  {
+    grupo: 'Solupan 1x100',
+    produtos: [
+      { id: 'sp100_5',  nome: 'Solupan 1x100', tam: '5L',  preco: 70.00 },
+      { id: 'sp100_20', nome: 'Solupan 1x100', tam: '20L', preco: 250.00 },
+      { id: 'sp100_50', nome: 'Solupan 1x100', tam: '50L', preco: 500.00 },
+    ]
+  },
+  {
+    grupo: 'Intercap 1x20',
+    produtos: [
+      { id: 'ic20_5',  nome: 'Intercap 1x20', tam: '5L',  preco: 35.00 },
+      { id: 'ic20_20', nome: 'Intercap 1x20', tam: '20L', preco: 90.00 },
+      { id: 'ic20_50', nome: 'Intercap 1x20', tam: '50L', preco: 180.00 },
+    ]
+  },
+  {
+    grupo: 'Intercap 1x40',
+    produtos: [
+      { id: 'ic40_5',  nome: 'Intercap 1x40', tam: '5L',  preco: 30.00 },
+      { id: 'ic40_20', nome: 'Intercap 1x40', tam: '20L', preco: 115.00 },
+      { id: 'ic40_50', nome: 'Intercap 1x40', tam: '50L', preco: 230.00 },
+    ]
+  },
+  {
+    grupo: 'Intercap 1x100',
+    produtos: [
+      { id: 'ic100_5',  nome: 'Intercap 1x100', tam: '5L',  preco: 80.00 },
+      { id: 'ic100_20', nome: 'Intercap 1x100', tam: '20L', preco: 250.00 },
+      { id: 'ic100_50', nome: 'Intercap 1x100', tam: '50L', preco: 500.00 },
+    ]
+  },
+  {
+    grupo: 'Intercap Linha Truck',
+    produtos: [
+      { id: 'ict_5',  nome: 'Intercap Linha Truck', tam: '5L',  preco: 50.00 },
+      { id: 'ict_20', nome: 'Intercap Linha Truck', tam: '20L', preco: 150.00 },
+      { id: 'ict_50', nome: 'Intercap Linha Truck', tam: '50L', preco: 300.00 },
+    ]
+  },
+];
+
+// Estado de quantidade por produto
+const qty = {};
+catalogo.forEach(g => g.produtos.forEach(p => { qty[p.id] = 0; }));
+
+// Tipo de desconto
+let tipoDesconto = 'pct';
+
+function setTipoDesconto(tipo) {
+  tipoDesconto = tipo;
+  document.getElementById('btnPct').classList.toggle('ativo', tipo === 'pct');
+  document.getElementById('btnVal').classList.toggle('ativo', tipo === 'val');
+  document.getElementById('descontoSufixo').textContent = tipo === 'pct' ? '%' : 'R$';
+  document.getElementById('descontoInput').value = '';
+  renderTotais();
+}
+
+// =============================================
+// RENDERIZAR GRUPOS
+// =============================================
+function renderGrupos() {
+  const wrap = document.getElementById('grupos');
+  wrap.innerHTML = '';
+
+  catalogo.forEach((g, gi) => {
+    const div = document.createElement('div');
+    div.className = 'grupo';
+
+    const header = document.createElement('div');
+    header.className = 'grupo-header';
+    header.innerHTML = `<span>${g.grupo}</span><span class="grupo-arrow" id="arrow_${gi}">▼</span>`;
+    header.onclick = () => toggleGrupo(gi);
+
+    const body = document.createElement('div');
+    body.className = 'grupo-body';
+    body.id = `body_${gi}`;
+
+    const tabWrap = document.createElement('div');
+    tabWrap.className = 'tabela-wrap';
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Embalagem</th>
+          <th class="center">Qtd</th>
+          <th>Preço Unit.</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>`;
+
+    const tbody = document.createElement('tbody');
+    g.produtos.forEach(p => {
+      const sub = qty[p.id] * p.preco;
+      const tr = document.createElement('tr');
+      if (qty[p.id] > 0) tr.classList.add('tem-item');
+      tr.innerHTML = `
+        <td><div class="produto-nome">${p.nome}</div></td>
+        <td><span class="produto-sub">${p.tam}</span></td>
+        <td class="center">
+          <div class="qty-wrap">
+            <button onclick="ajustar('${p.id}',-1)">−</button>
+            <input type="number" min="0" value="${qty[p.id]}" onchange="setVal('${p.id}',this.value)">
+            <button onclick="ajustar('${p.id}',1)">+</button>
+          </div>
+        </td>
+        <td class="preco-cell">R$ ${p.preco.toFixed(2).replace('.',',')}</td>
+        <td class="right">${sub > 0 ? 'R$ ' + sub.toFixed(2).replace('.',',') : '—'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    tabWrap.appendChild(table);
+    body.appendChild(tabWrap);
+
+    // Marcar grupo para impressão se tiver algum item selecionado
+    const grupoTemItem = g.produtos.some(p => qty[p.id] > 0);
+    if (grupoTemItem) body.classList.add('tem-itens');
+
+    div.appendChild(header);
+    div.appendChild(body);
+    wrap.appendChild(div);
+  });
+
+  renderTotais();
+}
+
+function toggleGrupo(gi) {
+  const body = document.getElementById(`body_${gi}`);
+  const arrow = document.getElementById(`arrow_${gi}`);
+  body.classList.toggle('collapsed');
+  arrow.textContent = body.classList.contains('collapsed') ? '▶' : '▼';
+}
+
+function ajustar(id, delta) {
+  qty[id] = Math.max(0, qty[id] + delta);
+  renderGrupos();
+}
+function setVal(id, val) {
+  qty[id] = Math.max(0, parseInt(val) || 0);
+  renderGrupos();
+}
+
+// =============================================
+// TOTAIS COM DESCONTO
+// =============================================
+function renderTotais() {
+  let totalQty = 0, subtotal = 0;
+  catalogo.forEach(g => g.produtos.forEach(p => {
+    totalQty += qty[p.id];
+    subtotal += qty[p.id] * p.preco;
+  }));
+
+  const dInput = parseFloat(document.getElementById('descontoInput').value) || 0;
+  let descValor = 0;
+  if (dInput > 0) {
+    descValor = tipoDesconto === 'pct'
+      ? subtotal * (dInput / 100)
+      : Math.min(dInput, subtotal);
+  }
+  const total = subtotal - descValor;
+
+  document.getElementById('totalItens').textContent = totalQty + ' un';
+  document.getElementById('subtotalGeral').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
+  document.getElementById('totalGeral').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+
+  const linhaDesc = document.getElementById('linhaDesconto');
+  if (descValor > 0) {
+    linhaDesc.style.display = 'flex';
+    document.getElementById('valorDesconto').textContent = '— R$ ' + descValor.toFixed(2).replace('.',',');
+    const pct = subtotal > 0 ? ((descValor/subtotal)*100).toFixed(1) : '0';
+    document.getElementById('descontoEconomia').textContent =
+      tipoDesconto === 'pct'
+        ? `Economia de R$ ${descValor.toFixed(2).replace('.',',')} no pedido`
+        : `Desconto de ${pct}% sobre o subtotal`;
+  } else {
+    linhaDesc.style.display = 'none';
+    document.getElementById('descontoEconomia').textContent = '';
+  }
+}
+
+// =============================================
+// LIMPAR
+// =============================================
+function limpar() {
+  if (!confirm('Limpar todos os dados do pedido?')) return;
+  catalogo.forEach(g => g.produtos.forEach(p => { qty[p.id] = 0; }));
+  ['cliente','doc','telefone','endereco','rota','obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('vendedor').value = '';
+  document.getElementById('pagamento').value = '';
+  document.getElementById('prazo').value = '';
+  document.getElementById('descontoInput').value = '';
+  preencherData();
+  gerarNumeroPedido();
+  renderGrupos();
+}
+
+// =============================================
+// WHATSAPP
+// =============================================
+function gerarWhatsApp() {
+  const num   = document.getElementById('numPedido').textContent;
+  const data  = document.getElementById('data').value.split('-').reverse().join('/');
+  const vend  = document.getElementById('vendedor').value || '—';
+  const rota  = document.getElementById('rota').value || '—';
+  const cli   = document.getElementById('cliente').value || '—';
+  const doc   = document.getElementById('doc').value || '';
+  const tel   = document.getElementById('telefone').value || '';
+  const end   = document.getElementById('endereco').value || '—';
+  const pag   = document.getElementById('pagamento').value || '—';
+  const prazo = document.getElementById('prazo').value || '—';
+  const obs   = document.getElementById('obs').value || '';
+
+  let itens = '';
+  let totalQty = 0, subtotal = 0;
+
+  catalogo.forEach(g => {
+    let linhasGrupo = '';
+    g.produtos.forEach(p => {
+      if (qty[p.id] === 0) return;
+      const sub = qty[p.id] * p.preco;
+      totalQty += qty[p.id];
+      subtotal += sub;
+      linhasGrupo += `  • ${p.nome} ${p.tam} × ${qty[p.id]} un = R$ ${sub.toFixed(2).replace('.',',')}\n`;
+    });
+    if (linhasGrupo) itens += `▸ ${g.grupo}\n${linhasGrupo}`;
+  });
+
+  if (!itens) { alert('Nenhum produto adicionado ao pedido.'); return; }
+
+  const dInput = parseFloat(document.getElementById('descontoInput').value) || 0;
+  let descValor = 0;
+  if (dInput > 0) {
+    descValor = tipoDesconto === 'pct' ? subtotal * (dInput/100) : Math.min(dInput, subtotal);
+  }
+  const total = subtotal - descValor;
+
+  let blocoDesc = '';
+  if (descValor > 0) {
+    const dStr = tipoDesconto === 'pct' ? `${dInput}%` : `R$ ${dInput.toFixed(2).replace('.',',')}`;
+    blocoDesc = `🏷 Desconto (${dStr}): — R$ ${descValor.toFixed(2).replace('.',',')}\n`;
+  }
+
+  const texto =
+`╔══════════════════════════════╗
+  MARIANO PRODUTOS QUÍMICOS
+  CNPJ 43.735.866/0001-53
+╚══════════════════════════════╝
+
+📋 PEDIDO ${num} — ${data}
+👤 Vendedor: ${vend}  |  Rota: ${rota}
+
+━━━━━━ CLIENTE ━━━━━━
+🏢 ${cli}${doc ? '\n📄 ' + doc : ''}${tel ? '\n📞 ' + tel : ''}
+📍 ${end}
+
+━━━━━━ PRODUTOS ━━━━━━
+${itens}
+━━━━━━ VALORES ━━━━━━
+📦 Itens: ${totalQty} unidades
+Subtotal: R$ ${subtotal.toFixed(2).replace('.',',')}
+${blocoDesc}💰 TOTAL: R$ ${total.toFixed(2).replace('.',',')}
+
+💳 Pagamento: ${pag}
+🚚 Entrega: ${prazo}${obs ? '\n\n📝 Obs: ' + obs : ''}
+
+_____________________________
+Mariano Produtos Químicos – Paranavaí/PR`;
+
+  navigator.clipboard.writeText(texto).then(() => {
+    mostrarToast('✓ Pedido copiado! Cole no WhatsApp.');
+  }).catch(() => {
+    copiarFallback(texto);
+  });
+}
+
+function copiarFallback(texto) {
+  // Fallback robusto para mobile (iOS/Android)
+  const ta = document.createElement('textarea');
+  ta.value = texto;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;opacity:0;';
+  document.body.appendChild(ta);
+  // iOS precisa de seleção via range
+  if (navigator.userAgent.match(/ipad|iphone/i)) {
+    const range = document.createRange();
+    range.selectNodeContents(ta);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    ta.setSelectionRange(0, 999999);
+  } else {
+    ta.select();
+  }
+  try {
+    document.execCommand('copy');
+    mostrarToast('✓ Pedido copiado! Cole no WhatsApp.');
+  } catch {
+    mostrarToast('⚠ Copie manualmente o texto gerado.');
+  }
+  document.body.removeChild(ta);
+}
+
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function preencherData() {
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
+}
+
+function gerarNumeroPedido() {
+  let seq = parseInt(localStorage.getItem('mq_seq') || '0') + 1;
+  localStorage.setItem('mq_seq', seq);
+  document.getElementById('numPedido').textContent = '#' + String(seq).padStart(3,'0');
+}
+
+// INIT
+preencherData();
+gerarNumeroPedido();
+renderGrupos();
+</script>
+</body>
+</html>
